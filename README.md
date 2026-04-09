@@ -1,4 +1,16 @@
-# How I Built the AgriShield Terminal
+# AgriShield Terminal
+
+A high-fidelity prototype dashboard simulating WindBorne Systems' Atlas balloon constellation and WeatherMesh WM-5c forecast model.
+
+![AgriShield Terminal](./public/screenshot.png)
+
+[Live Demo](https://agrishield-terminal.vercel.app/)
+
+**Tech Stack:** Built with Next.js 15, Mapbox GL JS, TypeScript, Tailwind CSS v4, shadcn/ui, and Recharts.
+
+---
+
+## How I Built the AgriShield Terminal
 
 Hi! If you're reading this, you're probably looking under the hood of the AgriShield Terminal. I wanted to put this document together to walk you through my thought process, the architecture, and some of the tough trade-offs I had to make while building this.
 
@@ -63,8 +75,9 @@ erDiagram
     }
     POINT_FORECAST {
         string model
+        string model_source
         string initializationTime
-        float ecmwf_precipitation_mm_hr
+        float precipitation_mm_hr
     }
     FORECAST_TIMESTEP {
         string validTime
@@ -159,33 +172,13 @@ flowchart TD
 
 I track the map instance using `useRef`. Whenever the telemetry hook updates, I just grab the source layer directly via `map.getSource()` and mutably inject the new GeoJSON data. It is buttery smooth.
 
-### Visual 6: Dealing with User Frustration (isUserInteracting)
-
-There is nothing more frustrating than trying to drag a map to look at something, only for an auto-update to violently snap your camera back to the balloon. I built an `isUserInteracting` state machine that listens to mouse/touch events and temporarily detaches the tracking camera until the user has been idle for exactly 3 seconds.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Interacting: mousedown / touchstart
-    Interacting --> Cooldown: mouseup / touchend
-    Cooldown --> Idle: 3000ms timer
-    
-    state Configuration {
-        Idle: Map follows telemetry asset
-        Interacting: Auto follow disabled
-        Cooldown: Auto follow paused
-    }
-```
-
----
-
 ## 5. UI Architecture: Killing the Scrollbar
 
 I'm a firm believer that critical operational dashboards shouldn't require scrolling. If an alert is buried below the fold, it might as well not exist.
 
 To fix this, I took a lot of inspiration from aviation Multifunction Displays (MFDs). I split the left and right sidebars into distinct "pages" that you tab between. 
 
-### Visual 7: My Paged Sidebar Hierarchy
+### Visual 6: My Paged Sidebar Hierarchy
 
 ```mermaid
 graph TD
@@ -203,7 +196,7 @@ graph TD
 
 I used CSS `translateX` for the sliding animations because I wanted to keep the components mounted at all times. If I conditionally rendered them, I'd trigger massive garbage collection spikes every time the heavy Recharts SVGs were destroyed and recreated.
 
-### Visual 8: Asynchronous Attention Grabbing
+### Visual 7: Asynchronous Attention Grabbing
 
 But what happens if there's an urgent warning, but the user is looking at the Analysis page? I built a small asynchronous feedback loop. If a saturation alert fires and you aren't on the Warning page, the WRN pip at the bottom starts pulsing bright red to forcefully attract your attention.
 
@@ -226,7 +219,7 @@ Since this project deals with high-altitude stratospheric data, I wanted to make
 
 I opted to track `specific_humidity` (mg of water per kg of air) rather than standard Relative Humidity (RH%). In the extreme cold of the stratosphere, the air holds so little moisture that RH percentages become highly deceptive. Specific humidity gave me an absolute, pressure-independent metric to build my saturation alerts around.
 
-### Visual 9: Why I Used Ensemble Spread Instead of "Confidence Scores"
+### Visual 8: Why I Used Ensemble Spread Instead of "Confidence Scores"
 
 I decided early on that returning a simple "85% Confidence" score was a cop-out. It creates a false sense of security. Instead, I wired up the UI to visualize the variance of a full 24-member prediction ensemble. I built a custom Box-and-Whisker range bar that surfaces the actual probabilistic spread—allowing operators to see exactly *how* wide the variance is, rather than just trusting a single deterministic number.
 
@@ -248,7 +241,7 @@ flowchart LR
 
 I mocked out a lot of the array data here to prove out the UI interactions. But I purposefully built the terminal to be extensible for when we plug this into a real high-throughput backend—specifically focusing on Zarr chunked arrays hosted out of an S3 bucket.
 
-### Visual 10: My Plan for Cloud Extensibility
+### Visual 9: My Plan for Cloud Extensibility
 
 ```mermaid
 erDiagram
