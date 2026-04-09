@@ -4,8 +4,6 @@ A high-fidelity prototype dashboard simulating WindBorne Systems' Atlas balloon 
 
 ![AgriShield Terminal](./public/screenshot.png)
 
-[Live Demo](https://agrishield-terminal.vercel.app/)
-
 **Tech Stack:** Built with Next.js 15, Mapbox GL JS, TypeScript, Tailwind CSS v4, shadcn/ui, and Recharts.
 
 ---
