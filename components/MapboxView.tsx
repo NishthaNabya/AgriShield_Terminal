@@ -35,6 +35,12 @@ export default function MapboxView({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
+    // Safety check: Bypass map mount if token is missing (usually during Vercel static build analysis)
+    if (!mapboxToken) {
+      console.warn('Mapbox token missing: Bypassing map initialization.');
+      return;
+    }
+
     // Create the custom HTML Pulse Marker once
     const el = document.createElement('div');
     el.className = 'h-4 w-4 bg-orange-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(249,115,22,0.8)] border border-orange-200';
