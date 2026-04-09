@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": ">=20.x"
+    "node": "20.x"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
   },
   "scripts": {
     "dev": "next dev",
