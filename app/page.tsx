@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 
-const MapboxView = dynamic(() => import("../components/MapboxView"), { 
+const MapboxView = dynamic(() => import("../components/MapboxView"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center font-mono text-sm text-zinc-600 bg-zinc-950">
@@ -26,7 +26,7 @@ import {
 import React, { useState, useEffect, useCallback } from "react"
 import { missionTelemetryResponse, pointForecastData } from "../lib/windborne-api-mock"
 
-export function useLiveTelemetry() {
+function useLiveTelemetry() {
   const [index, setIndex] = useState(0);
   const [profileCrossings, setProfileCrossings] = useState(0);
   const renderCountRef = React.useRef(0);
@@ -50,7 +50,7 @@ export function useLiveTelemetry() {
 
       const dtPrev = p2.timestamp - p1.timestamp;
       const prevVz = dtPrev !== 0 ? (p2.altitude - p1.altitude) / dtPrev : 0;
-      
+
       const dtCurr = p3.timestamp - p2.timestamp;
       const currVz = dtCurr !== 0 ? (p3.altitude - p2.altitude) / dtCurr : 0;
 
@@ -111,16 +111,16 @@ function DebugOverlay({ telemetry }: { telemetry: ReturnType<typeof useLiveTelem
         <div className="grid grid-cols-2 gap-x-12 gap-y-2">
           <span className="text-zinc-500 uppercase text-xs tracking-wider">Array Index Tic</span>
           <span className="text-emerald-400">{telemetry.tick} / {missionTelemetryResponse.observations.length - 1}</span>
-          
+
           <span className="text-zinc-500 uppercase text-xs tracking-wider">Unix Timestamp</span>
           <span className="text-emerald-400">{telemetry.timestamp}</span>
-          
+
           <span className="text-zinc-500 uppercase text-xs tracking-wider">Calculated v_z</span>
           <span className="text-emerald-400">{telemetry.v_z.toFixed(4)} m/s</span>
-          
+
           <span className="text-zinc-500 uppercase text-xs tracking-wider">Profile X-ings</span>
           <span className="text-emerald-400">{telemetry.profileCrossings}</span>
-          
+
           <span className="text-zinc-500 uppercase text-xs tracking-wider">Top Render Cnt</span>
           <span className="text-emerald-400">{telemetry.renderCount}</span>
         </div>
@@ -190,7 +190,7 @@ function VectorCard({ telemetry }: { telemetry: ReturnType<typeof useLiveTelemet
         <div className="font-mono text-2xl text-emerald-400 tabular-nums">
           {windMagnitude.toFixed(1)} <span className="text-sm text-zinc-500">m/s</span>
         </div>
-        <div 
+        <div
           className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center transition-transform duration-500"
           style={{ transform: `rotate(${telemetry.windAngle}deg)` }}
         >
@@ -218,42 +218,42 @@ function TargetingPanel() {
       <div className="flex h-32 items-center gap-6 pt-2">
         <div className="flex flex-col justify-between h-full text-[10px] text-zinc-500 py-2 font-mono">
           <span className="flex items-center gap-1 group relative">
-             VENT
-             <span title="Venting gas increases balloon density for controlled descent.">
-               <HelpCircle className="h-3 w-3 cursor-help opacity-50 hover:opacity-100 transition-opacity" />
-             </span>
+            VENT
+            <span title="Venting gas increases balloon density for controlled descent.">
+              <HelpCircle className="h-3 w-3 cursor-help opacity-50 hover:opacity-100 transition-opacity" />
+            </span>
           </span>
           <span className="text-emerald-400">HOLD</span>
           <span className="flex items-center gap-1 group relative">
-             BALLAST
-             <span title="Dropping ballast forces immediate ascent.">
-               <HelpCircle className="h-3 w-3 cursor-help opacity-50 hover:opacity-100 transition-opacity" />
-             </span>
+            BALLAST
+            <span title="Dropping ballast forces immediate ascent.">
+              <HelpCircle className="h-3 w-3 cursor-help opacity-50 hover:opacity-100 transition-opacity" />
+            </span>
           </span>
         </div>
-        
+
         <div className="relative h-full w-4 flex flex-col justify-center items-center">
-          <input 
-            type="range" 
-            min="16000" 
+          <input
+            type="range"
+            min="16000"
             max="19000"
-            step="500" 
-            value={tempTargetAlt} 
+            step="500"
+            value={tempTargetAlt}
             onChange={(e) => setTempTargetAlt(Number(e.target.value))}
             onPointerUp={() => setSliderValue(tempTargetAlt)}
             className="w-32 h-1 absolute -rotate-90 appearance-none bg-transparent [&::-webkit-slider-runnable-track]:bg-zinc-800 [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-emerald-500 [&::-webkit-slider-thumb]:transition-transform hover:[&::-webkit-slider-thumb]:scale-110 cursor-pointer"
           />
-          <div 
+          <div
             className="absolute left-6 pointer-events-none transition-all duration-75 flex items-center gap-1.5 text-emerald-400 font-mono text-[10px] whitespace-nowrap"
             style={{ bottom: `calc(${snapPercent}% - 6px)` }}
           >
-             <div className="h-px w-2 bg-emerald-500/50" />
-             {tempTargetAlt}m
+            <div className="h-px w-2 bg-emerald-500/50" />
+            {tempTargetAlt}m
           </div>
         </div>
       </div>
       <div className="flex justify-end pt-2 border-t border-zinc-800/50">
-        <button 
+        <button
           onClick={handleExecute}
           className="px-3 py-1.5 bg-transparent border border-zinc-800 text-[9px] font-mono text-zinc-500 hover:text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50 active:text-emerald-400 active:border-emerald-500/50 active:bg-emerald-500/10 rounded transition-all duration-150 tracking-widest uppercase">
           Execute Retarget
@@ -381,21 +381,19 @@ function LeftSidebar({ telemetry }: { telemetry: ReturnType<typeof useLiveTeleme
       <div className="shrink-0 border-t border-zinc-800 p-2 flex gap-2">
         <button
           onClick={() => setPage('NAV')}
-          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${
-            page === 'NAV'
+          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${page === 'NAV'
               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
               : 'border-zinc-800 text-zinc-600 hover:text-zinc-300 hover:border-zinc-600'
-          }`}
+            }`}
         >
           ◈ NAV
         </button>
         <button
           onClick={() => setPage('SND')}
-          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${
-            page === 'SND'
+          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${page === 'SND'
               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
               : 'border-zinc-800 text-zinc-600 hover:text-zinc-300 hover:border-zinc-600'
-          }`}
+            }`}
         >
           ◈ SND
         </button>
@@ -410,17 +408,17 @@ function CenterStage({ activeModel, isTransitioning, telemetry }: { activeModel:
       {/* Subtle overlay gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/80 via-transparent to-zinc-950/80 pointer-events-none z-10" />
 
-      <MapboxView 
-        activeModel={activeModel} 
-        externalTelemetry={telemetry} 
+      <MapboxView
+        activeModel={activeModel}
+        externalTelemetry={telemetry}
         ensembleSpreadDerived={pointForecastData.forecasts[0][0].ensembleSpreadDerived}
       />
 
       {isTransitioning && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-zinc-950/50 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2 bg-zinc-900/80 p-4 rounded border border-zinc-800">
-             <div className="h-5 w-5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-             <span className="font-mono text-xs text-emerald-400 animate-pulse">Assimilating Targeted Observations...</span>
+            <div className="h-5 w-5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+            <span className="font-mono text-xs text-emerald-400 animate-pulse">Assimilating Targeted Observations...</span>
           </div>
         </div>
       )}
@@ -481,11 +479,11 @@ function AssimilationCycleBar() {
   );
 }
 
-function ForecastToggle({ 
-  activeModel, 
+function ForecastToggle({
+  activeModel,
   setActiveModel,
   flash
-}: { 
+}: {
   activeModel: 'ecmwf' | 'wm-5c'
   setActiveModel: (model: 'ecmwf' | 'wm-5c') => void
   flash: boolean
@@ -503,23 +501,21 @@ function ForecastToggle({
         Forecast Delta Toggle
       </h3>
       <div className="flex gap-2">
-        <button 
+        <button
           onClick={handleEcmwf}
-          className={`flex-1 px-3 py-2 rounded text-xs font-mono transition-all duration-150 border ${
-            activeModel === 'ecmwf'
+          className={`flex-1 px-3 py-2 rounded text-xs font-mono transition-all duration-150 border ${activeModel === 'ecmwf'
               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
               : 'border-zinc-800 bg-transparent text-zinc-500 hover:text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50'
-          }`}
+            }`}
         >
           ECMWF (6hr lag)
         </button>
-        <button 
+        <button
           onClick={handleWm5c}
-          className={`flex-1 px-3 py-2 rounded text-xs font-mono transition-all duration-150 border ${
-            activeModel === 'wm-5c'
+          className={`flex-1 px-3 py-2 rounded text-xs font-mono transition-all duration-150 border ${activeModel === 'wm-5c'
               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
               : 'border-zinc-800 bg-transparent text-zinc-500 hover:text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50'
-          }`}
+            }`}
         >
           WM-5c (Live)
         </button>
@@ -703,8 +699,8 @@ function VarianceRangeBar() {
   )
 }
 
-function RightSidebar({ 
-  activeModel, 
+function RightSidebar({
+  activeModel,
   setActiveModel,
   telemetry
 }: {
@@ -764,7 +760,7 @@ function RightSidebar({
           <div className="w-full shrink-0 p-4 flex flex-col gap-4 overflow-y-auto">
             <ConvergenceGauge telemetry={telemetry} />
             <AlertCard activeModel={activeModel} flash={cycleFlash} />
-            
+
             {/* System Health (compact) */}
             <div className="mt-auto pt-3 border-t border-zinc-800 space-y-2">
               <div className="bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 flex items-center justify-between">
@@ -794,23 +790,21 @@ function RightSidebar({
       <div className="shrink-0 border-t border-zinc-800 p-2 flex gap-2">
         <button
           onClick={() => setPage('WRN')}
-          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${
-            page === 'WRN'
+          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${page === 'WRN'
               ? 'bg-orange-500/10 border-orange-500/50 text-orange-400'
               : hasUrgentAlert
                 ? 'border-red-500/50 text-red-400 animate-pulse bg-red-500/5'
                 : 'border-zinc-800 text-zinc-600 hover:text-zinc-300 hover:border-zinc-600'
-          }`}
+            }`}
         >
           ⚠ WRN
         </button>
         <button
           onClick={() => setPage('ANL')}
-          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${
-            page === 'ANL'
+          className={`flex-1 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded transition-all duration-150 border ${page === 'ANL'
               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
               : 'border-zinc-800 text-zinc-600 hover:text-zinc-300 hover:border-zinc-600'
-          }`}
+            }`}
         >
           ◈ ANL
         </button>
